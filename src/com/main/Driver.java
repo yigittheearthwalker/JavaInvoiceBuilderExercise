@@ -8,9 +8,7 @@ public class Driver {
 
 	public static void main(String[] args) {
 		
-		HashMap<String, Double> inventory = new HashMap<>();
-		
-		Inventory.build(inventory);
+		HashMap<String, Double> inventory = Inventory.build();
 		
 		Invoice.build(inventory);
 		
