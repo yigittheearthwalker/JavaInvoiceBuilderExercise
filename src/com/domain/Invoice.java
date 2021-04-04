@@ -1,5 +1,8 @@
 package com.domain;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,6 +15,7 @@ public class Invoice {
 	static Random random = new Random();
 	static String currency = "USD";
 	static double vat = 0.18;
+	static FileWriter fileWriter = null;
 	
 	// To Build the invoice
 	public static void build(Map<String, Double> inventory) {
@@ -37,11 +41,26 @@ public class Invoice {
 		}
 		double vatAmount = total * vat;
 		footerBuilder(total, vatAmount);
-		
+	}
+	static void invoiceInitiator () {
+		int invoiceNumber = random.nextInt(Integer.MAX_VALUE);
+		Locale locale = new Locale("tr", "TR");
+		DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+		String date = dateFormat.format(new Date());
+		String formattedString = String.format(Formats.INITIATION_FORMAT, "Invoice Number", invoiceNumber, "Date", date);
+		System.out.println(formattedString);
+		try {
+			fileWriter = new FileWriter(new File(invoiceNumber + ".txt"));
+			fileWriter.append(formattedString);
+			fileWriter.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	static void logoBuilder() {
-		System.out.printf(Formats.LOGO_FORMAT, 
+		String formattedString = String.format(Formats.LOGO_FORMAT, 
 				" _____                 _            ____        _ _     _           \n" + 
 				"|_   _|               (_)          |  _ \\      (_) |   | |          \n" + 
 				"  | |  _ ____   _____  _  ___ ___  | |_) |_   _ _| | __| | ___ _ __ \n" + 
@@ -51,32 +70,64 @@ public class Invoice {
 				"                                                                    \n" + 
 				"                                                                    \n" + 
 				"");
+	System.out.println(formattedString);
+	try {
+		fileWriter.append(formattedString);
+		fileWriter.flush();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		
 	}
 	
 	static void headerBuiler() {
-		System.out.printf(Formats.HEADER_FORMAT, "No", "Item", "Quantity", "Price", "Total Amount");
+		String formattedString = String.format(Formats.HEADER_FORMAT, "No", "Item", "Quantity", "Price", "Total Amount");
+		System.out.println(formattedString);
 		System.out.println("------------------------------------------------------------------------------");
+		try {
+			fileWriter.append(formattedString);
+			fileWriter.flush();
+			fileWriter.append("------------------------------------------------------------------------------\n");
+			fileWriter.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	static void inventoryItemBuilder(int no, String item, int quantityPurchased, double price, double totalAmount) {
 		String totalAmountWithCurrency =  Double.toString(totalAmount).concat(" " + currency);
-		System.out.printf(Formats.INVOICE_ITEM_FORMAT, no, item, quantityPurchased, price, totalAmountWithCurrency);
+		String formattedString = String.format(Formats.INVOICE_ITEM_FORMAT, no, item, quantityPurchased, price, totalAmountWithCurrency);
+		System.out.println(formattedString);
+		try {
+			fileWriter.append(formattedString);
+			fileWriter.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	static void footerBuilder(double total, double vatAmount) {
 		String totalWithCurrency = Double.toString(total).concat(" " + currency);
 		String vatWithCurrency = Double.toString(vatAmount).concat(" " + currency);
 		String grandTotalWithCurrency =  Double.toString(total + vatAmount).concat(" " + currency);
-		System.out.println("------------------------------------------------------------------------------\n");
-		System.out.printf(Formats.FOOTER_FORMAT, "Signature", "Total", totalWithCurrency, "VAT", vatWithCurrency, "Grand Total", grandTotalWithCurrency);
-
-	}
-
-	
-	static void invoiceInitiator () {
-		int invoiceNumber = random.nextInt(Integer.MAX_VALUE);
-		Locale locale = new Locale("tr", "TR");
-		DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
-		String date = dateFormat.format(new Date());
+		String formattedString = String.format(Formats.FOOTER_FORMAT, "Signature", "Total", totalWithCurrency, "VAT", vatWithCurrency, "Grand Total", grandTotalWithCurrency);
 		
-		System.out.printf(Formats.INITIATION_FORMAT, "Invoice Number", invoiceNumber, "Date", date);
+		System.out.println("------------------------------------------------------------------------------\n");
+		System.out.println(formattedString);
+		
+		try {
+			fileWriter.append("------------------------------------------------------------------------------\n");
+			fileWriter.flush();
+			fileWriter.append(formattedString);
+			fileWriter.flush();
+			fileWriter.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
+
 }
